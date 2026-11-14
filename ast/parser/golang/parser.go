@@ -21,9 +21,7 @@ func NewCustomParser(projectDir string) *CustomGoParser {
 }
 
 func (p *CustomGoParser) ParseFile(filename string) {
-	fset := token.NewFileSet()
-
-	astReturn, err := parser.ParseFile(fset, filename, nil, 0)
+	astReturn, err := parser.ParseFile(p.fset, filename, nil, 0)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -38,7 +36,7 @@ func (p *CustomGoParser) ParseFile(filename string) {
 			return false
 		case *ast.FuncDecl:
 			p.handleFuncDecls(x)
-			return false
+			return true
 		case *ast.TypeSpec:
 			switch t := x.Type.(type) {
 			case *ast.StructType:
@@ -47,8 +45,10 @@ func (p *CustomGoParser) ParseFile(filename string) {
 				p.handleInterfaces(x.Name.Name, t)
 			}
 			return false
+		case *ast.CallExpr:
+			p.handleFuncCalls(x)
+			return true
 		}
-
 		return true
 	})
 }

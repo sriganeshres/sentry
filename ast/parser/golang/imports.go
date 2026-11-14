@@ -16,7 +16,8 @@ func (p *CustomGoParser) handleImports(imp *ast.ImportSpec) {
 		rawPath = imp.Path.Value
 	}
 	kind := p.classifyImport(rawPath)
-	fmt.Printf("[%s] Import: %s\n", kind, rawPath)
+	pos := p.fset.Position(imp.Pos())
+	fmt.Printf("[%s] Import: %s - At %s\n", kind, rawPath, pos)
 }
 
 func (p *CustomGoParser) classifyImport(importPath string) string {
