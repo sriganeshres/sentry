@@ -2,41 +2,42 @@
 package golang
 
 import (
-	"fmt"
 	"go/ast"
-	"go/parser"
 	"go/token"
+	"go/types"
 )
 
 type CustomGoParser struct {
 	moduleName string
 	fset       *token.FileSet
+	typesInfo  *types.Info
 }
 
-func NewCustomParser(projectDir string) *CustomGoParser {
+func NewCustomParser(projectDir string, fset *token.FileSet, info *types.Info) *CustomGoParser {
 	return &CustomGoParser{
 		moduleName: detectModuleName(projectDir),
-		fset:       token.NewFileSet(),
+		fset:       fset,
+		typesInfo:  info,
 	}
 }
 
-func (p *CustomGoParser) ParseFile(filename string) {
-	astReturn, err := parser.ParseFile(p.fset, filename, nil, 0)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// ast.Print(fset, astReturn)
-
-	ast.Inspect(astReturn, func(n ast.Node) bool {
+func (p *CustomGoParser) ParseFile(file *ast.File) {
+	ast.Inspect(file, func(n ast.Node) bool {
 		switch x := n.(type) {
 		case *ast.ImportSpec:
 			p.handleImports(x)
 			return false
 		case *ast.FuncDecl:
-			p.handleFuncDecls(x)
-			return true
+			caller := p.handleFuncDecls(x)
+			if x.Body != nil {
+				ast.Inspect(x.Body, func(n ast.Node) bool {
+					if call, ok := n.(*ast.CallExpr); ok {
+						p.handleFuncCalls(caller, call)
+					}
+					return true
+				})
+			}
+			return false
 		case *ast.TypeSpec:
 			switch t := x.Type.(type) {
 			case *ast.StructType:
@@ -45,9 +46,6 @@ func (p *CustomGoParser) ParseFile(filename string) {
 				p.handleInterfaces(x.Name.Name, t)
 			}
 			return false
-		case *ast.CallExpr:
-			p.handleFuncCalls(x)
-			return true
 		}
 		return true
 	})

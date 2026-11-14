@@ -30,11 +30,11 @@
 
 - [ ] Integrate Tree-sitter for multi-language parsing.
 - [x] Implement Go-native AST analysis using `go/ast`.
-- [ ] Extract packages and modules.
-- [ ] Extract functions and methods.
-- [ ] Extract structs, classes and interfaces.
-- [ ] Extract imports and dependencies.
-- [ ] Identify function calls and references.
+- [x] Extract packages and modules.
+- [x] Extract functions and methods.
+- [x] Extract structs, classes and interfaces.
+- [x] Extract imports and dependencies.
+- [x] Identify function calls and references.
 - [ ] Identify API handlers and routes.
 - [ ] Identify database models and operations.
 - [ ] Identify event publishers and consumers.

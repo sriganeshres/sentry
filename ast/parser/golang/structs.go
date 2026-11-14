@@ -3,6 +3,7 @@ package golang
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 )
 
 func (p *CustomGoParser) handleStructs(name string, st *ast.StructType) {
@@ -10,7 +11,7 @@ func (p *CustomGoParser) handleStructs(name string, st *ast.StructType) {
 	fmt.Printf("Struct %s - At %s\n", name, pos)
 	for _, vals := range st.Fields.List {
 		for _, names := range vals.Names {
-			fmt.Printf("Fields %s - %s \n", names.Name, vals.Type)
+			fmt.Printf("Fields %s - %s \n", names.Name, types.ExprString(vals.Type))
 		}
 	}
 }
