@@ -8,8 +8,8 @@
 ## Phase 0 — Research & Architecture
 
 - [x] Finalize system architecture.
-- [ ] Define supported programming languages for initial AST analysis.
-- [ ] Research AST parsing libraries and language-specific parsers.
+- [x] Define supported programming languages for initial AST analysis.
+- [x] Research AST parsing libraries and language-specific parsers.
 - [ ] Define engineering knowledge graph schema.
 - [ ] Define graph node types and relationship types.
 - [ ] Define observed, proposed, accepted and rejected states.
@@ -18,7 +18,7 @@
 
 ## Phase 1 — Project Foundation
 
-- [ ] Initialize Go project and module structure.
+- [x] Initialize Go project and module structure.
 - [ ] Establish modular application architecture.
 - [ ] Implement configuration management.
 - [ ] Implement Ollama client integration.
@@ -29,7 +29,7 @@
 ## Phase 2 — AST Analysis Engine
 
 - [ ] Integrate Tree-sitter for multi-language parsing.
-- [ ] Implement Go-native AST analysis using `go/ast`.
+- [x] Implement Go-native AST analysis using `go/ast`.
 - [ ] Extract packages and modules.
 - [ ] Extract functions and methods.
 - [ ] Extract structs, classes and interfaces.
