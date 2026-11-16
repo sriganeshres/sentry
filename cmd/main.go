@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"go/token"
 	"log"
@@ -32,7 +33,14 @@ func main() {
 		p := golang.NewCustomParser(".", fset, pkg.TypesInfo)
 		for _, file := range pkg.Syntax {
 			fmt.Printf("\n---File: %s---\n", fset.Position(file.Pos()).Filename)
-			p.ParseFile(file)
+			fileNode := p.ParseFile(file)
+			fileNode.FilePath = fset.Position(file.Pos()).Filename
+			data, err := json.MarshalIndent(fileNode, "", "      ")
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Println(string(data))
 		}
 	}
 }

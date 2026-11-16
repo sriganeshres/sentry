@@ -1,34 +1,45 @@
 package golang
 
 import (
-	"fmt"
 	"go/ast"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"sentry/ast/types"
 )
 
-func (p *CustomGoParser) handleImports(imp *ast.ImportSpec) {
+func (p *CustomGoParser) handleImports(imp *ast.ImportSpec) types.Import {
 	rawPath, err := strconv.Unquote(imp.Path.Value)
 	if err != nil {
 		rawPath = imp.Path.Value
 	}
+	alias := ""
+	if imp.Name != nil {
+		alias = imp.Name.Name
+	}
 	kind := p.classifyImport(rawPath)
 	pos := p.fset.Position(imp.Pos())
-	fmt.Printf("[%s] Import: %s - At %s\n", kind, rawPath, pos)
+	return types.Import{
+		Path:   rawPath,
+		Alias:  alias,
+		Kind:   kind,
+		Line:   pos.Line,
+		Column: pos.Column,
+	}
 }
 
 func (p *CustomGoParser) classifyImport(importPath string) string {
 	if p.moduleName != "" && (importPath == p.moduleName || strings.HasPrefix(importPath, p.moduleName+"/")) {
-		return "Internal"
+		return "INTERNAL"
 	}
 	first := strings.SplitN(importPath, "/", 2)[0]
 	if !strings.Contains(first, ".") {
 		return "STDLIB"
 	}
-	return "External"
+	return "EXTERNAL"
 }
 
 func detectModuleName(filePath string) string {
